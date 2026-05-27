@@ -1,0 +1,919 @@
+/* =========================================
+   1. VARIABLES (Design Tokens)
+   ========================================= */
+
+  @font-face {
+  font-family: 'Instrument Sans';
+  src: url('MadDev/font/Instrument_Sans.woff2') format('woff2');
+  /* The range tells the browser this one file can generate anything from 400 to 700 */
+  font-weight: 400 700; 
+  font-style: normal;
+  font-display: swap;
+  }
+
+:root {
+  /* --- Spacing Scale --- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 32px;
+  --space-xl: 64px;
+
+  /* --- Border Radius --- */
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 16px;
+
+  /* --- Typography --- */
+  --font-heading: 'Instrument Sans', sans-serif;
+  --font-body: 'Instrument Sans', sans-serif;
+  --weight-regular: 400;
+  --weight-bold: 700;
+  --leading-body: 1.6;
+  --leading-heading: 1.2;
+
+  /* --- Type Scale --- */
+  --text-xs: 10.4px;
+  --text-sm: 13.6px;
+  --text-body: 16px;
+  --text-h6: 16px;
+  --text-h5: 20px;
+  --text-h4: 25px;
+  --text-h3: 31.25px;
+  --text-h2: 39px;
+  --text-h1: 48.8px;
+
+  /* --- UI Colors --- */
+  --color-canvas: #000000; /* Main background */
+  --color-surface: #1a1a1a; /* Service card background */
+  --color-text-primary: #ffffff;
+  --color-text-muted: #a0aec0; /* Subtitle text */
+}
+
+/* --- Desktop Typography Scale (18px Base) --- */
+@media (min-width: 1024px) {
+  :root {
+    --text-xs: 12px;
+    --text-sm: 15px;
+    --text-body: 18px;
+    --text-h6: 18px;
+    --text-h5: 22.5px;
+    --text-h4: 28px;
+    --text-h3: 35px;
+    --text-h2: 44px;
+    --text-h1: 55px;
+  }
+}
+
+/* =========================================
+   2. RESET
+   ========================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img, picture, svg {
+  max-width: 100%;
+  display: block;
+}
+
+/* =========================================
+   3. BASE TYPOGRAPHY & CANVAS
+   ========================================= */
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
+  line-height: var(--leading-body);
+  font-size: var(--text-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: var(--leading-heading);
+  font-weight: var(--weight-bold);
+}
+
+/* =========================================
+   4. MACRO-LAYOUT & UTILITIES
+   ========================================= */
+/* Wrapper */
+.l-wrapper {
+  width: 100%;
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+
+/* Flexbox Primitives */
+.l-flex-col { display: flex; flex-direction: column; }
+.l-flex-row { display: flex; flex-direction: row; }
+.u-align-center { align-items: center; }
+.u-justify-between { justify-content: space-between; }
+.u-justify-center { justify-content: center; }
+
+/* Grid Primitives */
+.l-grid { display: grid; }
+
+/* Gap Scale Mapping */
+.u-gap-xs { gap: var(--space-xs); }
+.u-gap-sm { gap: var(--space-sm); }
+.u-gap-md { gap: var(--space-md); }
+.u-gap-lg { gap: var(--space-lg); }
+.u-gap-xl { gap: var(--space-xl); }
+
+/* Padding Utilities */
+.u-pad-y-lg { padding-top: var(--space-lg); padding-bottom: var(--space-lg); }
+.u-pad-y-xl { padding-top: var(--space-xl); padding-bottom: var(--space-xl); }
+
+/* Desktop Overrides */
+@media (min-width: 1024px) {
+  .l-wrapper {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-left: 0;
+    padding-right: 0;
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+  }
+}
+
+/* =========================================
+   5. COMPONENTS
+   ========================================= */
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+  /* Adjust this radius to match your exact Figma pill shape */
+  border-radius: var(--radius-xl); 
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background-color: var(--color-text-primary);
+  color: var(--color-canvas);
+  /* Roughly matches the padding from your visual button */
+  padding: 8px 16px; 
+  font-size: var(--text-sm);
+}
+
+.btn--primary:hover {
+  background-color: #e6e6e6; /* Slight dim on hover */
+}
+
+.btn--primary:active {
+  transform: scale(0.98); /* Physical 'click' compression */
+}
+
+/* --- Navbar --- */
+.navbar {
+  position: fixed; /* Locks it to the screen viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  /* Adds a semi-transparent black background so scrolling text doesn't bleed through */
+  background-color: rgba(0, 0, 0, 0.85); 
+  backdrop-filter: blur(12px); /* Native blur effect */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Extremely subtle bottom line */
+}
+
+.navbar__inner {
+  height: 60px; /* Locks to your exact Figma height spec */
+  /* Top and bottom padding to match your 10px layout property */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.navbar__logo {
+  height: 24px; /* Set to your preferred logo height */
+  width: auto;
+}
+
+.navbar__nav {
+  gap: var(--space-md); /* 16px gap for mobile to prevent overflow */
+}
+
+.navbar__link {
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--weight-regular);
+  transition: color 0.2s ease;
+}
+
+.navbar__link:hover {
+  color: var(--color-text-muted);
+}
+
+/* Navbar: Desktop Overrides */
+@media (min-width: 1024px) {
+  .navbar__nav {
+    gap: 24px; /* Snaps to your exact 24px Figma layout on larger screens */
+  }
+}
+
+/* --- Footer Component --- */
+.footer {
+  background-color: var(--color-canvas);
+  /* Adds a subtle 1px line to cleanly separate it from the sections above it */
+  border-top: 1px solid var(--color-surface); 
+}
+
+.footer__inner {
+  /* Locks in the 64px top and bottom padding from your Figma spec */
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  /* The exact 32px gap separating the columns from the copyright text */
+  gap: var(--space-lg); 
+}
+
+.footer__main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl); 
+}
+.footer__col {
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.footer__logo {
+  height: 32px; 
+  margin-bottom: var(--space-xs); /* Nudges the logo slightly to balance the text below */
+}
+
+.footer__heading {
+  font-size: var(--text-body);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.footer__link {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.footer__link:hover {
+  color: var(--color-text-primary); /* Brightens text on hover for a premium feel */
+}
+
+.footer__copyright {
+  font-size: var(--text-xs); /* Uses your 10.4px token for discrete copyright text */
+  color: var(--color-text-muted);
+  text-align: center;
+  width: 100%;
+}
+
+/* Footer: Desktop Overrides */
+@media (min-width: 1024px) {
+  .footer__main {
+    flex-direction: row; /* Snaps the columns side-by-side */
+    justify-content: space-between; /* Pushes the 3 blocks to the edges and center */
+    gap: 0; /* Kills the mobile stacking gap */
+  }
+}
+
+/* --- Hero Component --- */
+.hero {
+  position: relative;
+  width: 100%;
+  /* The glow effect behind the portrait */
+  background: radial-gradient(circle at 75% 50%, #1a1a1a 0%, var(--color-canvas) 60%);
+  
+  /* Mobile padding: accounts for the 60px absolute navbar so content isn't hidden */
+  padding-top: calc(60px + var(--space-xl)); 
+  padding-bottom: var(--space-xl);
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl); 
+}
+
+.hero__content {
+  gap: 24px; /* Matches your exact Figma gap spec */
+  text-align: left;
+}
+
+.hero__text-group {
+  gap: var(--space-xs); /* Tighter grouping for the H1 and H2 */
+}
+
+.hero__title {
+  font-size: var(--text-h2); /* Scaled slightly for mobile */
+  line-height: var(--leading-heading);
+  color: var(--color-text-primary);
+}
+
+.hero__subtitle {
+  font-size: var(--text-h5);
+  line-height: var(--leading-heading);
+  color: var(--color-text-primary);
+  font-weight: var(--weight-regular);
+}
+
+.hero__desc {
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+  max-width: 500px;
+  line-height: var(--leading-body);
+}
+
+.hero__visual {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hero__img {
+  width: 100%;
+  max-width: 450px; /* Keeps the portrait proportionate on tablets */
+  height: auto;
+  
+  /* The native mask that fades the bottom pixels into transparency */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+}
+
+/* Hero: Desktop Overrides */
+@media (min-width: 1024px) {
+  .hero {
+    /* Base padding + the exact 64px offset from your Figma spec */
+    padding-top: calc(60px + 64px); 
+    padding-bottom: 64px;
+    min-height: 800px; /* Matches Figma frame height */
+    display: flex;
+    align-items: center; /* Centers the content block vertically */
+  }
+
+  .hero__inner {
+    flex-direction: row; /* Snaps to 2 columns */
+    justify-content: space-between;
+    gap: var(--space-xl);
+  }
+
+  .hero__content {
+    width: 50%;
+    max-width: 747px; /* Matches your text box width spec */
+  }
+
+  .hero__title {
+    font-size: var(--text-h1); /* Scales up to your largest token */
+  }
+
+  .hero__visual {
+    width: 50%;
+    justify-content: flex-end; /* Pushes portrait to the far right */
+    /* Nudges the image up slightly to fix the vertical centering issue from before */
+    transform: translateY(-20px); 
+  }
+
+  .hero__img {
+    max-width: 400px; 
+  }
+}
+
+/* --- Generic Section Utilities --- */
+.section-title {
+  font-size: var(--text-h3);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+/* --- Projects Component --- */
+.projects {
+  width: 100%;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  background-color: var(--color-canvas); /* Ensures consistent background */
+}
+
+.projects__inner {
+  gap: var(--space-lg); /* 32px gap between the title and the content block */
+}
+
+.projects__content {
+  width: 100%;
+  gap: var(--space-lg); /* 32px gap between the card and the "See Other" link */
+  /* Mobile: Center the link. Desktop will push it to the right */
+  align-items: center; 
+}
+
+/* The Card Itself */
+.project-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md); 
+}
+
+.project-card__visual {
+  width: 100%;
+  position: relative;
+}
+
+.project-card__img {
+  width: 100%;
+  height: auto;
+  /* Adds a very subtle outline to separate dark images from the dark canvas */
+  border: 1px solid var(--color-surface); 
+}
+
+.project-card__info {
+  gap: var(--space-sm);
+}
+
+.project-card__title {
+  font-size: var(--text-h5);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.project-card__desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-body);
+}
+
+.project-card__link {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--space-xs);
+  transition: color 0.2s ease;
+}
+
+.project-card__link:hover {
+  color: var(--color-text-muted);
+}
+
+.projects__view-all {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  transition: color 0.2s ease;
+}
+
+.projects__view-all:hover {
+  color: var(--color-text-muted);
+}
+
+/* Projects: Desktop Overrides */
+@media (min-width: 1024px) {
+  .projects__content {
+    /* Pushes the "See Other Projects" link to the far right to match Figma */
+    align-items: flex-end; 
+  }
+
+  .project-card {
+    flex-direction: row; /* Snaps image and text side-by-side */
+    align-items: flex-start;
+    gap: 24px; /* Matches exact Figma spacing */
+    align-self: stretch; /* Forces the card to span the full width */
+  }
+
+  .project-card__visual {
+    /* Adjust this percentage to give more or less room to the image vs text */
+    flex: 0 0 60%; 
+  }
+}
+
+/* --- About Component --- */
+.about {
+  width: 100%;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  background-color: var(--color-canvas);
+}
+
+.about__inner {
+  gap: 10px; /* Exact match to your Figma layout property */
+}
+
+.about__desc {
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+  line-height: var(--leading-body);
+  text-align: center;
+  
+  /* Locks the text width so it doesn't stretch 1312px wide on desktop, 
+     which would make it exhausting for the user's eyes to track */
+  max-width: 680px; 
+}
+
+/* --- Services Component --- */
+.services {
+  width: 100%;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  background-color: var(--color-canvas);
+}
+
+.services__inner {
+  gap: var(--space-xl); /* The primary 64px vertical flow */
+}
+
+.services__grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md); 
+}
+
+.service-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-md);
+  /* Full width on mobile, constrained max-width */
+  width: 100%;
+  max-width: 300px;
+  height: 250px; /* Matches Figma height spec */
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.service-card:hover {
+  background-color: #222222; /* Subtle highlight to show interactivity */
+  transform: translateY(-4px); /* Very slight lift on hover */
+}
+
+.service-card__icon {
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.service-card__title {
+  font-size: var(--text-body);
+  color: var(--color-text-primary);
+  text-align: center;
+  line-height: var(--leading-body);
+  font-weight: var(--weight-bold);
+}
+
+.services__summary {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 600px; /* Prevents the text from stretching too wide to read */
+}
+
+/* Services: Desktop Overrides */
+@media (min-width: 1024px) {
+  .services__grid {
+    flex-direction: row; /* Flips to horizontal alignment */
+    justify-content: center;
+    gap: var(--space-xl); /* Expands to your exact 64px gap spec */
+  }
+
+  .service-card {
+    /* (728px total - 128px gaps) / 3 cards = 200px width per card */
+    width: 200px; 
+    padding: 0; /* Removes mobile padding to rely strictly on flex centering */
+  }
+}
+
+/* --- CTA Component --- */
+.cta {
+  width: 100%;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  background-color: var(--color-canvas);
+}
+
+.cta__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md); 
+  text-align: center;
+}
+
+.cta__text {
+  font-size: var(--text-h5); /* Large enough to command attention, small enough to fit */
+  color: var(--color-text-primary);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+}
+
+/* CTA: Desktop Overrides */
+@media (min-width: 1024px) {
+  .cta__inner {
+    flex-direction: row; /* Snaps the text and button side-by-side */
+    justify-content: center;
+    gap: 12px; /* The exact tight gap from your Figma layout specs */
+  }
+
+  .cta__text {
+    font-size: var(--text-h4); /* Scales up slightly for the wider viewport */
+  }
+}
+
+/* =========================================
+   6. PAGE SPECIFIC LAYOUTS
+   ========================================= */
+
+/* --- Projects Page --- */
+.all-projects {
+  width: 100%;
+  background-color: var(--color-canvas);
+  /* 60px absolute Navbar + 64px standard spacing */
+  padding-top: calc(60px + var(--space-xl));
+  padding-bottom: var(--space-xl);
+}
+
+.all-projects__inner {
+  /* 64px gap between the Page Title and the first Project Card */
+  gap: var(--space-xl); 
+}
+
+.page-title {
+  font-size: var(--text-h3);
+  color: var(--color-text-primary);
+  text-align: left; /* Aligns left instead of centered */
+}
+
+.project-list {
+  width: 100%;
+  gap: var(--space-lg); /* 32px gap between each individual card */
+}
+
+/* Page Specific Desktop Overrides */
+@media (min-width: 1024px) {
+  .page-title {
+    font-size: var(--text-h2); /* Scales up slightly for desktop readability */
+  }
+}
+
+/* --- Single Project Page --- */
+.project-detail {
+  width: 100%;
+  background-color: var(--color-canvas);
+  padding-top: calc(60px + var(--space-xl));
+  padding-bottom: var(--space-xl);
+}
+
+.project-detail__inner {
+  gap: var(--space-xl); 
+}
+
+/* Top Container (Hero) */
+.project-hero {
+  width: 100%;
+  gap: var(--space-lg);
+  position: relative;
+}
+
+.project-hero__img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-surface); 
+}
+
+.project-hero__info {
+  gap: var(--space-sm);
+}
+
+.project-hero__title {
+  font-size: var(--text-h3);
+  color: var(--color-text-primary);
+}
+
+.project-hero__desc {
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+  line-height: var(--leading-body);
+  max-width: 800px; 
+}
+
+/* Bottom Container (Alternating Features) */
+.project-features {
+  width: 100%;
+  gap: var(--space-xl); /* The 64px gap separating each row */
+}
+
+.project-feature {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md); 
+}
+
+.project-feature__info {
+  width: 100%;
+}
+
+.project-feature__desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-body);
+}
+
+.project-feature__visual {
+  width: 100%;
+}
+
+.project-feature__img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-surface);
+}
+
+/* Single Project: Desktop Overrides */
+@media (min-width: 1024px) {
+  .project-hero__title {
+    font-size: var(--text-h2); 
+  }
+
+  .project-feature {
+    flex-direction: row; /* Snaps image and text side-by-side */
+    justify-content: space-between;
+    align-items: flex-start; 
+    gap: var(--space-xl);
+  }
+
+  /* The Zig-Zag Modifier */
+  .project-feature--reverse {
+    flex-direction: row-reverse; /* Flips the order for alternating rows */
+  }
+
+  /* Locks the proportions so the images line up perfectly down the page */
+  .project-feature__info {
+    width: 35%; /* Adjust this to give text more or less breathing room */
+  }
+
+  .project-feature__visual {
+    width: 60%; /* Gives the mockup image priority weighting */
+  }
+}
+
+/* --- Contact Page --- */
+
+/* 1. Contact Hero */
+.contact-hero {
+  width: 100%;
+  /* We add a subtle dark gray underneath so your transparent Figma gradient has a base to glow against */
+  background-color: #222222; 
+  background-image: radial-gradient(58.87% 63.72% at 50% 50%, rgba(75, 75, 75, 0.00) 0%, #000 100%);
+  
+  /* Standard 64px mobile padding + 60px navbar offset */
+  padding-top: calc(60px + var(--space-xl));
+  padding-bottom: var(--space-xl);
+}
+
+.contact-hero__title {
+  font-size: var(--text-h3);
+  color: var(--color-text-primary);
+  text-align: center;
+  max-width: 800px; /* Keeps the text from stretching too wide on ultrawide monitors */
+  line-height: var(--leading-heading);
+}
+
+/* 2. Contact Details (The Shape-Shifter) */
+.contact-details {
+  width: 100%;
+  background-color: var(--color-canvas);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+/* Mobile State: Stacked Column */
+.contact-details__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl); 
+}
+
+.contact-details__intro {
+  gap: var(--space-sm);
+}
+
+.contact-details__heading {
+  font-size: var(--text-h2);
+  color: var(--color-text-primary);
+}
+
+.contact-details__desc {
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+
+.contact-details__info {
+  gap: var(--space-lg); /* 32px gap between the blocks */
+}
+
+.contact-info__title {
+  font-size: var(--text-h4);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-xs); /* Slight nudge to match Figma balance */
+}
+
+.contact-info__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs); /* Tight 4px gap between label and text */
+}
+
+.contact-info__label {
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--weight-bold);
+}
+
+.contact-info__text {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-body);
+}
+
+.contact-info__link {
+  transition: color 0.2s ease;
+}
+
+.contact-info__link:hover {
+  color: var(--color-text-primary); /* Brightens the clickable links on hover */
+}
+
+/* Contact Page: Desktop Overrides */
+@media (min-width: 1024px) {
+  .contact-hero {
+    /* Expands to your massive 128px padding spec for desktop */
+    padding-top: calc(60px + 128px);
+    padding-bottom: 128px;
+  }
+
+  .contact-hero__title {
+    font-size: var(--text-h2); /* Scales up text */
+  }
+
+  .contact-details {
+    padding-top: 128px;
+    padding-bottom: 128px;
+  }
+
+  /* Desktop State: Side-by-Side Row */
+  .contact-details__inner {
+    flex-direction: row; 
+    justify-content: space-between;
+    align-items: flex-start; /* Anchors both columns to the top edge */
+    gap: var(--space-xl);
+  }
+
+  .contact-details__intro {
+    width: 50%;
+    max-width: 500px; /* Constrains the left text so it doesn't bleed into the center */
+  }
+
+  .contact-details__info {
+    width: 50%;
+    max-width: 400px;
+  }
+}
+
+/*STICKER*/
+.sticker {
+  position: absolute;
+  top: 24px;
+  left: 24px; 
+  z-index: 10;
+  
+  /* The Typography */
+  color: #dc2626; /* A punchy, pure red */
+  font-size: var(--text-h4); /* Scaled up slightly since it lost the box */
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  
+  /* The Bare-Metal Contrast Hack */
+  /* Layer 1: A tight, dark outline. Layer 2: A wider, soft shadow drop. */
+  text-shadow: 
+    0px 2px 4px rgba(0, 0, 0, 0.9), 
+    0px 0px 12px rgba(0, 0, 0, 0.6);
+  
+  /* A subtle angle to give it character */
+  transform: rotate(-15deg); 
+}
